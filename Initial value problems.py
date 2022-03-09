@@ -1,37 +1,48 @@
-def deltax (xn,x0,n):
-    return (xn - x0)/n
+import numpy as np
+import matplotlib.pyplot as plt
 
-def f(x):
-    return x
+def f(u,t):
+    dxdt = u[1]
+    dydt = -u[0]
+    return np.array([dxdt,dydt])
 
-def euler(x0,y0,xn,n):
-    for i in range(n):
-        yn = y0 + deltax(xn,x0,n) * f(x0)
-        print("Step "+ str(i) + str((x0,y0,deltax(xn,x0,n),yn)))
-        y0 = yn
-        x0 = x0 + deltax(xn,x0,n)
-    print(xn,yn)
+def euler_step(f,x0,t0,n):
+    xn = x0 + n * f(x0,t0)
+    tn = t0 + n
+    return xn,tn
 
-def dydx(x,y):
-    return 1
+def rk4_step(f,x0, t0, n):
+    k1 = f(x0,t0)
+    k2 = f(x0 + 0.5 * n * k1, t0 + 0.5 * n)
+    k3 = f(x0 + 0.5 * n * k2, t0 + 0.5 * n)
+    k4 = f(x0 + n * k3, t0 + n)
+    xn = x0 + n* (k1 + 2 * k2 + 2 * k3 + k4)/6
+    tn = t0 + n
+    return xn,tn
 
-def RK4(x0, y0, xn, h):
-    n = int((xn - x0)/h)
-    y = y0
-    for i in range (n + 1):
-        k1 = h * dydx(x0,y)
-        k2 = h * dydx(x0 + 0.5 * h, y + 0.5 * k1)
-        k3 = h * dydx(x0 + 0.5 * h,y + 0.5 * k2)
-        k4 = h * dydx(x0 + h,y + k3)
-        y = y + (k1 + 2 * k2 + 2 * k3 + k4)/6
-        x0 = x0 + h
-    return y
+def solve_to(method,f,x0,t0,tn,deltat_max):
+    while tn - t0 > deltat_max:
+        x0,t0 = method(f,x0,t0,deltat_max)
+    else:
+        x0,t0 = method(f,x0,tn-t0,deltat_max)
+    return x0
 
-x0 = 0
-y0 = 1
-xn = 10
-n = 101
-h = 0.2
+def solve_ode(method,f,x0,t,deltat_max):
+    x = np.empty(shape = (len(t),len(x0)))
+    x[0] = x0
+    for i in range (len(t)-1):
+        x[i+1] = solve_to(method,f,x[i],t[i],t[i+1],deltat_max)
+    return x.transpose()
 
-euler(x0,y0,xn,n)
-print(RK4(x0, y0, xn, h))
+t = np.linspace(0,20,100)
+euler = solve_ode(euler_step,f,[2,2],t,0.005)
+rk4 = solve_ode(rk4_step,f,[2,2],t,0.005)
+
+plt.plot(t, euler[0], label='Euler X')
+plt.plot(t, rk4[0], label='RK4 X')
+plt.plot(t, euler[1], label='Euler Y')
+plt.plot(t, rk4[1], label='RK4 Y')
+plt.legend()
+plt.xlabel('t')
+plt.ylabel('x and y')
+plt.show()
