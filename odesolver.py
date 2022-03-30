@@ -5,7 +5,7 @@ def f(u,t):
     # 2nd order ODE where dxdt = y , dydt = x
     # u: array, parameter x and y
     # t: array, time value
-    # return: array, initial values for ODE
+    # return: array, equations for ODE
     dxdt = u[1]
     dydt = -u[0]
     return np.array([dxdt,dydt])
