@@ -5,6 +5,8 @@ import odesolver
 
 def predator_prey(x,t,args):
     # predator prey function
+    # x: array, x1,x2
+    # t: array, time value
     # return: array, equations for ODE
     alpha = 1
     delta = 0.1
@@ -15,6 +17,7 @@ def predator_prey(x,t,args):
 
 def phase_condition(u0,args):
     # phase condition of the function
+    # u0: array, x
     # return: function value at time 0
     return predator_prey(u0,0,args)[0]
 
