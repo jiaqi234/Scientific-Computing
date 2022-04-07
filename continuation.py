@@ -3,6 +3,8 @@ import numpy as np
 import scipy
 from scipy.optimize import fsolve,newton,root
 import shooting
+import pdesolver
+import math
 
 def algebraic_cubic(x,args):
     # algebraic cubic function
@@ -43,6 +45,20 @@ def modifyhopf_phase_condiiton(u0,args):
     # args: array, additional argument to pass to the function
     # return: modified hopf bifurcation normal form value at time 1
     return modifyhopf(u0,1,args)[0]
+
+def pde_solve(f,u,args):
+    # convert function format to make it compatible with solver method
+    return f(u,args)
+
+def heater_equation_pde(u,args):
+    # 
+    k = args[0]
+    l = 5
+    t = 2
+    mx = 10
+    mt = 100
+    f_x, f_u = pdesolver.solve_pde('forward', k, l, t, mx, mt,'neumann', pdesolver.f,pdesolver.s, pdesolver.left_boundary, pdesolver.right_boundary, fargs=l)
+    return f_u
 
 def solve(solver, x0,index,var,discretisation,f,u0,pc):
     # solve the function with discretisation and parameter
@@ -154,3 +170,28 @@ def pseudo_arclength_continuation(solver,f,u0,x0,index,range,num,discretisation,
 # plt.ylabel('x')
 # plt.legend()
 # plt.show()
+
+
+
+k = 0.5
+l = 5
+mx = 10
+x = np.linspace(0, l, mx + 1)
+
+npc, x_npc = natural_parameter_continuation(pde_solve,heater_equation_pde,np.ones(mx + 1), np.array([k]),0,[0.5,5], 5 , discretisation=lambda x: x)
+pac, x_pac = pseudo_arclength_continuation(pde_solve,heater_equation_pde,np.ones(mx + 1), np.array([k]),0,[0.5,5], 5 , discretisation=lambda x: x)
+
+
+plt.plot(x, np.transpose(x_npc))
+plt.xlabel('x')
+plt.ylabel(f'u')
+labels = [f"k = {k}" for k in npc]
+plt.legend(labels)
+plt.show()
+
+plt.plot(x, np.transpose(x_pac))
+plt.xlabel('x')
+plt.ylabel(f'u')
+labels = [f"k = {k}" for k in pac]
+plt.legend(labels)
+plt.show()
