@@ -4,9 +4,20 @@ import scipy.sparse
 import scipy.sparse.linalg
 import math
 def sparse_matrix(size,d1,d2,d3):
+    # sparse matrix of different size and diagonal values
+    # size: int, matrix size
+    # d1: int, first diagonal value
+    # d2: int, second diagonal value
+    # d3: int, third diagonal value
+    # return: array, tridiagonal sparse matrix
     return scipy.sparse.diags(np.array([d1*np.ones(size-1),d2*np.ones(size),d3*np.ones(size-1)],dtype = object),[-1,0,1],format = 'csr')
 
 def methods(method,mtsize,lam):
+    # forward, backward or crank method
+    # method: string, methods to chosen
+    # mtsize: int, matrix size
+    # lam: float, fourier number
+    # return array, tridiagonal sparse matrix based on the method
     if method == "forward":
         mt1 = sparse_matrix(mtsize,0,1,0)
         mt2 = sparse_matrix(mtsize,lam,1-2*lam,lam)
@@ -19,11 +30,29 @@ def methods(method,mtsize,lam):
     return mt1,mt2
 
 def args(f,args):
+    # convert function format to make it compatible with argument
+    # f: function to be passed
+    # args: additional argument to pass to the function
+    # return: function
     def convert(x,t):
         return f(x,t,args)
     return convert
 
 def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,fargs = None):
+    # solves a diffusive and parabolic pde with dirichlet,periodic or neumann boundary type.
+    # method: string, methods to chosen
+    # k: float, kappa value
+    # l: float, length
+    # t: float, time
+    # mx: int, grid points in space
+    # mt: int, grid points in time
+    # boundarytype: string, boundary type, dirichlet,periodic or neumann
+    # f: function to be passed
+    # s: source function
+    # left_boundary: left boundary function
+    # right_ boundary: right boundary function
+    # fargs: array, additional argument to pass to the input function
+    # return: pde solution based on the time and length
     x = np.linspace(0,l,mx+1)
     t = np.linspace(0,t,mt+1)
     lam = k*(t[1] - t[0])/ (x[1]-x[0])** 2
@@ -83,23 +112,27 @@ def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,f
             uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
     return x, uj
 
-# k = 1
-# l = 2
-# t = 0.5
-# mx = 100
-# mt = 1000
+k = 0.5
+l = 5
+t = 2
+mx = 10
+mt = 100
 
-# def left_boundary(x,t):
-#     return 0
+def left_boundary(x,t):
+    #left boundary funciton
+    return 0
 
-# def right_boundary(x,t):
-#     return 1
+def right_boundary(x,t):
+    #right boundary funciton
+    return 1
 
-# def f(x,t,l):
-#     return np.sin(math.pi*x/l)
+def f(x,t,l):
+    # input function
+    return np.sin(math.pi*x/l)
 
-# def s(x,t):
-#     return x+t
+def s(x,t):
+    #source functinon
+    return x**2+t**2
 
 # f_x, f_u = solve_pde('forward', k, l, t, mx, mt,'dirichlet', f, None, left_boundary, right_boundary, fargs=l)
 # b_x, b_u = solve_pde('backward', k, l, t, mx, mt,'dirichlet', f,None, left_boundary, right_boundary,fargs=l)
@@ -110,7 +143,7 @@ def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,f
 # plt.plot(c_x, c_u, label='crank')
 # plt.legend()
 # plt.xlabel('x')
-# plt.ylabel('u(x,0.5)')
+# plt.ylabel('u')
 # plt.show()
 
 
@@ -123,5 +156,5 @@ def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,f
 # plt.plot(c_x, c_u, label='crank')
 # plt.legend()
 # plt.xlabel('x')
-# plt.ylabel('u(x,0.5)')
+# plt.ylabel('u')
 # plt.show()
