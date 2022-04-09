@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import os
+os.system('pip install progress')
+from progress.bar import Bar
 def f(u,t):
     # 2nd order ODE where dxdt = y , dydt = x
     # u: array, parameter x and y
@@ -65,8 +67,11 @@ def solve_ode(method,f,x0,t,deltat_max,*args):
     # return: array, x value of function in each time step
     x = np.empty(shape = (len(t),len(x0)))
     x[0] = x0
+    bar = Bar('Processing', max=len(t)-1)
     for i in range (len(t)-1):
         x[i+1] = solve_to(method,f,x[i],t[i],t[i+1],deltat_max, *args)
+        bar.next()
+    bar.finish()
     return x.transpose()
 
 # t = np.linspace(0,10,100)

@@ -51,7 +51,7 @@ def pde_solve(f,u,args):
     return f(u,args)
 
 def heater_equation_pde(u,args):
-    # 
+    # heater pde equations
     k = args[0]
     l = 5
     t = 2
@@ -173,25 +173,25 @@ def pseudo_arclength_continuation(solver,f,u0,x0,index,range,num,discretisation,
 
 
 
-k = 0.5
-l = 5
-mx = 10
-x = np.linspace(0, l, mx + 1)
+# k = 0.5
+# l = 5
+# mx = 10
+# x = np.linspace(0, l, mx + 1)
 
-npc, x_npc = natural_parameter_continuation(pde_solve,heater_equation_pde,np.ones(mx + 1), np.array([k]),0,[0.5,5], 5 , discretisation=lambda x: x)
-pac, x_pac = pseudo_arclength_continuation(pde_solve,heater_equation_pde,np.ones(mx + 1), np.array([k]),0,[0.5,5], 5 , discretisation=lambda x: x)
+# npc, x_npc = natural_parameter_continuation(pde_solve,heater_equation_pde,np.ones(mx + 1), np.array([k]),0,[0.5,5], 5 , discretisation=lambda x: x)
+# pac, x_pac = pseudo_arclength_continuation(pde_solve,heater_equation_pde,np.ones(mx + 1), np.array([k]),0,[0.5,5], 5 , discretisation=lambda x: x)
 
 
-plt.plot(x, np.transpose(x_npc))
-plt.xlabel('x')
-plt.ylabel(f'u')
-labels = [f"k = {k}" for k in npc]
-plt.legend(labels)
-plt.show()
+# plt.plot(x, np.transpose(x_npc))
+# plt.xlabel('x')
+# plt.ylabel(f'u')
+# labels = [f"k = {k}" for k in npc]
+# plt.legend(labels)
+# plt.show()
 
-plt.plot(x, np.transpose(x_pac))
-plt.xlabel('x')
-plt.ylabel(f'u')
-labels = [f"k = {k}" for k in pac]
-plt.legend(labels)
-plt.show()
+# plt.plot(x, np.transpose(x_pac))
+# plt.xlabel('x')
+# plt.ylabel(f'u')
+# labels = [f"k = {k}" for k in pac]
+# plt.legend(labels)
+# plt.show()

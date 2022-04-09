@@ -53,3 +53,4 @@ def limit_cycle(solver,f,pc,u0,*args):
 # plt.xlabel('x')
 # plt.ylabel('y')
 # plt.show()
+
