@@ -5,7 +5,6 @@ import scipy.sparse.linalg
 import math
 import os
 os.system('pip install progress')
-from progress.bar import Bar
 def sparse_matrix(size,d1,d2,d3):
     # sparse matrix of different size and diagonal values
     # size: int, matrix size
@@ -65,19 +64,17 @@ def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,f
         mtsize = mx -1
         uj = f(x[1:mx],0)
         mt1,mt2 = methods(method,mtsize,lam)
-        with Bar('Processing', max=mt) as bar:
-            for i in range(mt):
-                ti = t[i]
-                if s != None:
-                    svalue = s(x[1:mx],ti)
-                else:
-                    svalue = 0
-                vec = np.zeros(mtsize)
-                vec[0] = left_boundary(0,ti)
-                vec[-1] = right_boundary(l,ti)
-                vec = vec *lam + (t[1] - t[0])*svalue
-                uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
-                bar.next()
+        for i in range(mt):
+            ti = t[i]
+            if s != None:
+                svalue = s(x[1:mx],ti)
+            else:
+                svalue = 0
+            vec = np.zeros(mtsize)
+            vec[0] = left_boundary(0,ti)
+            vec[-1] = right_boundary(l,ti)
+            vec = vec *lam + (t[1] - t[0])*svalue
+            uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
         uj = np.concatenate(([left_boundary(0,t)],uj,[right_boundary(l,t)]))
     elif boundarytype == "periodic":
         mtsize = mx
@@ -87,16 +84,14 @@ def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,f
         mt1[mtsize - 1, 0] = mt1[0, 1]
         mt2[0, mtsize - 1] = mt2[0, 1]
         mt2[mtsize - 1, 0] = mt2[0, 1]
-        with Bar('Processing', max=mt) as bar:
-            for i in range(mt):
-                ti = t[i]
-                if s != None:
-                    svalue = np.append(s(x[:mx-1],t),s(x[:mx-1],t)[-1])
-                else:
-                    svalue = 0
-                vec = (t[1] - t[0])*svalue
-                uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
-                bar.next()
+        for i in range(mt):
+            ti = t[i]
+            if s != None:
+                svalue = np.append(s(x[:mx-1],t),s(x[:mx-1],t)[-1])
+            else:
+                svalue = 0
+            vec = (t[1] - t[0])*svalue
+            uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
         uj = np.append(uj,uj[0])
     elif boundarytype == "neumann":
         mtsize = mx +1
@@ -106,19 +101,17 @@ def solve_pde(method,k,l,t,mx,mt,boundarytype,f,s,left_boundary,right_boundary,f
         mt1[mtsize - 1, mtsize - 2] = mt1[mtsize - 1, mtsize - 2 ] * 2
         mt2[0, 1] = mt2[0, 1] * 2
         mt2[mtsize - 1, mtsize - 2] = mt2[mtsize - 1, mtsize - 2] * 2
-        with Bar('Processing', max=mt) as bar:
-            for i in range(mt):
-                ti = t[i]
-                if s != None:
-                    svalue = s(x,ti)
-                else:
-                    svalue = 0
-                vec = np.zeros(mtsize)
-                vec[0] = -left_boundary(0,ti)
-                vec[-1] = right_boundary(l,ti)
-                vec = 2 * vec *lam *(t[1] - t[0]) + (t[1] - t[0])*svalue
-                uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
-                bar.next()
+        for i in range(mt):
+            ti = t[i]
+            if s != None:
+                svalue = s(x,ti)
+            else:
+                svalue = 0
+            vec = np.zeros(mtsize)
+            vec[0] = -left_boundary(0,ti)
+            vec[-1] = right_boundary(l,ti)
+            vec = 2 * vec *lam *(t[1] - t[0]) + (t[1] - t[0])*svalue
+            uj = scipy.sparse.linalg.spsolve(mt1,mt2*uj+vec)
     return x, uj
 
 k = 0.5

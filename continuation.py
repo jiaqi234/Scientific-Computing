@@ -5,6 +5,7 @@ from scipy.optimize import fsolve,newton,root
 import shooting
 import pdesolver
 import math
+from progress.bar import Bar
 
 def algebraic_cubic(x,args):
     # algebraic cubic function
@@ -91,10 +92,13 @@ def natural_parameter_continuation(solver,f,u0,x0,index,range,num,discretisation
     # pc: function, phase condition
     # return: array,(parameter value lists,solution of each parameter value)
     sol = []
-    for var in (np.linspace(range[0],range[1],num)):
-        u0 = solve(solver,x0,index,var,discretisation,f,u0,pc)
-        sol.append(u0)
-        u0 = np.round(u0, 4)
+    with Bar('Loading', fill='#', suffix='%(percent).1f%% - %(eta)ds') as bar:
+        for var in (np.linspace(range[0],range[1],num)):
+            u0 = solve(solver,x0,index,var,discretisation,f,u0,pc)
+            sol.append(u0)
+            u0 = np.round(u0, 4)
+            bar.next()
+        bar.finish()
     return np.linspace(range[0],range[1],num),np.array(sol)
 
 def root_finding_arclength(x,f,discretisation,dx,dp,x0,index,pc = None):
@@ -133,15 +137,18 @@ def pseudo_arclength_continuation(solver,f,u0,x0,index,range,num,discretisation,
     para = []
     i0 = np.append(solve(solver,x0,index,range[0],discretisation,f,u0,pc),range[0])
     i1 = np.append(solve(solver,x0,index,range[0] + np.sign(range[1]-range[0])*0.05,discretisation,f,np.round(i0[:-1],2),pc),range[0] + np.sign(range[1]-range[0])*0.05)
-    while True:
-        x0[index] = np.append(i1[:-1] + i1[:-1] - i0[:-1], i1[-1]+i1[-1]-i0[-1])[-1]
-        sol = root(root_finding_arclength,np.append(i1[:-1] + i1[:-1] - i0[:-1], i1[-1]+i1[-1]-i0[-1]),method = 'lm',args=(f,discretisation, i1[:-1] - i0[:-1], i1[-1]-i0[-1], x0, 0, pc))['x']
-        if np.linalg.norm(sol[:-1]) - np.linalg.norm(i1[:-1]) > 0:
-            break
-        sols.append(sol[:-1])
-        para.append(sol[-1])
-        i0 = i1
-        i1 = sol
+    with Bar('Loading', fill='#', suffix='%(percent).1f%% - %(eta)ds') as bar:
+        while True:
+            x0[index] = np.append(i1[:-1] + i1[:-1] - i0[:-1], i1[-1]+i1[-1]-i0[-1])[-1]
+            sol = root(root_finding_arclength,np.append(i1[:-1] + i1[:-1] - i0[:-1], i1[-1]+i1[-1]-i0[-1]),method = 'lm',args=(f,discretisation, i1[:-1] - i0[:-1], i1[-1]-i0[-1], x0, 0, pc))['x']
+            if np.linalg.norm(sol[:-1]) - np.linalg.norm(i1[:-1]) > 0:
+                break
+            sols.append(sol[:-1])
+            para.append(sol[-1])
+            i0 = i1
+            i1 = sol
+            bar.next()
+        bar.finish()
     return para, np.array(sols) 
 
 # npc, x_npc = natural_parameter_continuation(fsolve,algebraic_cubic, np.array([1]),[2],0,[-2, 2], 200,discretisation=lambda x: x)
@@ -170,8 +177,6 @@ def pseudo_arclength_continuation(solver,f,u0,x0,index,range,num,discretisation,
 # plt.ylabel('x')
 # plt.legend()
 # plt.show()
-
-
 
 # k = 0.5
 # l = 5

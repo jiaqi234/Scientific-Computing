@@ -24,6 +24,7 @@ def phase_condition(u0,args):
 def shoot(f):
     # define shooting root finding function
     # return: function
+
     def shooting(u0,pc,*args):
         # u0: array, initial value and time
         # pc: function, phase condition of the input function
@@ -41,6 +42,7 @@ def limit_cycle(solver,f,pc,u0,*args):
     # pc: function, phase condition of the input function
     # args: array, additional argument to pass to the function
     return solver(shoot(f),u0,args = (pc,*args))
+
 
 # t = np.linspace(0, 100, 1000)
 # u0 = np.array([0.1, 0.2, 100])
