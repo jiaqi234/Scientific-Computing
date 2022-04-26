@@ -50,6 +50,8 @@ def solve_to(method,f,x0,t0,tn,deltat_max,*args):
     # deltat_max: float, step size
     # args: array, additional argument to pass to the function
     # return: array, x value of function after next step time
+    if method != "rk4_step" or "euler_step":
+       raise ValueError(f"method: '{method}' is not valid.")
     while tn - t0 > deltat_max:
         x0,t0 = method(f,x0,t0,deltat_max, *args)
     else:

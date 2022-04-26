@@ -41,6 +41,8 @@ def limit_cycle(solver,f,pc,u0,*args):
     # f: function to be passed
     # pc: function, phase condition of the input function
     # args: array, additional argument to pass to the function
+    if not callable(f):
+        raise TypeError(f"f: '{f}' is not a function.")
     return solver(shoot(f),u0,args = (pc,*args))
 
 

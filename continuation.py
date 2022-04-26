@@ -72,6 +72,11 @@ def solve(solver, x0,index,var,discretisation,f,u0,pc):
     # u0: array, initial value of the function
     # pc: function, phase condition
     # return: array,solution of the function
+    if not isinstance(index, (int, np.int_)):
+        raise TypeError(f"index: {index} is not an integer")
+    else:
+        if index < 0:
+            raise ValueError(f"index: {index} less than 0")
     x0[index] = var
     if pc is None:
         args = x0

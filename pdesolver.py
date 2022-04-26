@@ -36,6 +36,8 @@ def args(f,args):
     # f: function to be passed
     # args: additional argument to pass to the function
     # return: function
+    if not callable(f):
+        raise TypeError(f"f: '{f}' is not a function.")
     def convert(x,t):
         return f(x,t,args)
     return convert
