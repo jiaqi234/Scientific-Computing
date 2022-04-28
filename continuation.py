@@ -6,7 +6,7 @@ import shooting
 import pdesolver
 import math
 from progress.bar import Bar
-
+# Copyright: Jiaqi Wei(rf21798@bristol.ac.uk)
 def algebraic_cubic(x,args):
     # algebraic cubic function
     # x : float, independent variable
@@ -155,7 +155,7 @@ def pseudo_arclength_continuation(solver,f,u0,x0,index,range,num,discretisation,
             bar.next()
         bar.finish()
     return para, np.array(sols) 
-
+    
 # npc, x_npc = natural_parameter_continuation(fsolve,algebraic_cubic, np.array([1]),[2],0,[-2, 2], 200,discretisation=lambda x: x)
 # pac, x_pac = pseudo_arclength_continuation(fsolve,algebraic_cubic, np.array([1]),[2],0,[-2, 2], 200,discretisation=lambda x: x)
 # plt.plot(npc, scipy.linalg.norm(x_npc, axis=1, keepdims=True)[:, 0], label='Natural parameter continuation')

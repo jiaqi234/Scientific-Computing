@@ -5,7 +5,7 @@ import shooting
 import continuation
 import math
 import pdesolver
-
+# Copyright: Jiaqi Wei(rf21798@bristol.ac.uk)
 def f_true(t):
     # true value of ODE systems with dxdt =y, dydt = -x
     return np.array([np.sin(t)+np.cos(t),np.cos(t)-np.sin(t)])

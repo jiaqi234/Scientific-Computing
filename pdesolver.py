@@ -5,6 +5,7 @@ import scipy.sparse.linalg
 import math
 import os
 os.system('pip install progress')
+# Copyright: Jiaqi Wei(rf21798@bristol.ac.uk)
 def sparse_matrix(size,d1,d2,d3):
     # sparse matrix of different size and diagonal values
     # size: int, matrix size

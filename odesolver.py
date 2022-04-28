@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 os.system('pip install progress')
 from progress.bar import Bar
+# Copyright: Jiaqi Wei(rf21798@bristol.ac.uk)
 def f(u,t):
     # 2nd order ODE where dxdt = y , dydt = x
     # u: array, parameter x and y
@@ -50,7 +51,7 @@ def solve_to(method,f,x0,t0,tn,deltat_max,*args):
     # deltat_max: float, step size
     # args: array, additional argument to pass to the function
     # return: array, x value of function after next step time
-    if method != "rk4_step" or "euler_step":
+    if method not in [rk4_step,euler_step]:
        raise ValueError(f"method: '{method}' is not valid.")
     while tn - t0 > deltat_max:
         x0,t0 = method(f,x0,t0,deltat_max, *args)

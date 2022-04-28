@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import fsolve, newton
 import odesolver
-
+# Copyright: Jiaqi Wei(rf21798@bristol.ac.uk)
 def predator_prey(x,t,args):
     # predator prey function
     # x: array, x1,x2
@@ -44,7 +44,6 @@ def limit_cycle(solver,f,pc,u0,*args):
     if not callable(f):
         raise TypeError(f"f: '{f}' is not a function.")
     return solver(shoot(f),u0,args = (pc,*args))
-
 
 # t = np.linspace(0, 100, 1000)
 # u0 = np.array([0.1, 0.2, 100])
